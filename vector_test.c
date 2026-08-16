@@ -4,18 +4,23 @@
 #include "vector.h"
 
 int main(void){
-    Vector v = initVector(4);
+    Vector* v = initVector(4); //starting capacity of 4
 
     printf("appending\n");
     for(int i = 0; i < 10; i++){
-        push(&v, i);
-        printf("%d, size: %d, memory: %d\n", v.data[i], v.length, v.capacity);
+        push(v, i);
+        printf("%d, size: %zu, memory: %zu\n", v->data[i], lengthCheck(v), memCheck(v));
     }
     
+    printVector(v);
+    printf("vector length is %zu\n", v->length);
+    insert(v, 2, 99);
+    printVector(v);
+
     printf("popping\n");
     for(int i = 0; i < 10; i++){
-        printf("%d, size: %d, memory: %d\n", pop(&v), v.length, v.capacity);
+        printf("%d, size: %zu, memory: %zu\n", pop(v), lengthCheck(v), memCheck(v));
     }
 
-    free(v.data);
+    destroy(v);
 }
