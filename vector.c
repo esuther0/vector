@@ -1,19 +1,39 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <assert.h>
 #include "vector.h"
 
+struct Vector {
+    int* data;
+    size_t length;
+    size_t capacity;
+};
+
 static void resize(Vector* vector, size_t newCapacity){
-    vector->capacity = newCapacity;
-    vector->data = realloc(vector->data, sizeof(int) * vector->capacity);
+    int* tmp = realloc(vector->data, sizeof(int) * newCapacity);
+    if(tmp == NULL){
+        return;
+    } else{
+        vector->capacity = newCapacity;
+        vector->data = tmp;
+    }
 }
 
 Vector* initVector(size_t capacity){
-    assert(capacity > 0);
+    if(capacity == 0){
+        return NULL;
+    }
 
     Vector* v = malloc(sizeof(Vector));
+    if(v == NULL){
+        return NULL;
+    }
 
     v->data = malloc(sizeof(int) * capacity);
+    if(v->data == NULL){
+        free(v);
+        return NULL;
+    }
+
     v->length = 0;
     v->capacity = capacity;
   
@@ -39,8 +59,6 @@ void push(Vector* vector, int val){
 }
 
 int pop(Vector* vector){
-    assert(vector->length > 0 && "no elements to pop\n");
-
     vector->length--;
 
     int val = vector->data[vector->length];
@@ -54,8 +72,6 @@ int pop(Vector* vector){
 }
 
 void insert(Vector* vector, size_t index, int val){
-    assert(index <= vector->length);
-
     if(index == vector->length){
         push(vector, val);
         return;
@@ -78,17 +94,44 @@ void insert(Vector* vector, size_t index, int val){
     vector->data[index] = val;
 }
 
-size_t memCheck(Vector* vector){
+int removeAt(Vector* vector, size_t index){
+    if(index == vector->length - 1){
+        return pop(vector);
+    }
+
+    vector->length--;
+
+    int val = vector->data[index];
+
+    if(vector->length * 4 < vector->capacity){
+        resize(vector, vector->capacity / 2);
+    }
+
+    for(int i = index; i < vector->length; i++){
+        vector->data[i] = vector->data[i + 1];
+    }
+
+    return val;
+}
+
+int get(Vector* vector, size_t index){
+    return vector->data[index];
+}
+void set(Vector* vector, size_t index, int val){
+    vector->data[index] = val;
+}
+
+size_t getCapacity(Vector* vector){
     return vector->capacity;
 }
 
-size_t lengthCheck(Vector* vector){
+size_t getLength(Vector* vector){
     return vector->length;
 }
 
 void printVector(Vector* vector){
-    printf("Vector length: %zu\n", lengthCheck(vector));
-    printf("Vector memory: %zu\n", memCheck(vector));
+    printf("Vector length: %zu\n", getLength(vector));
+    printf("Vector memory: %zu\n", getCapacity(vector));
     
     printf("[ ");
     for(int i = 0; i < vector->length; i++){
