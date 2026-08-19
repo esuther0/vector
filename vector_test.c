@@ -6,47 +6,42 @@
 
 int main(void){
     Vector *v = initVector(4);
+    assert(v != NULL);
 
-    printf("appending\n");
     for (int i = 0; i < 10; i++) {
         push(v, i);
-
-        printf(
-            "%d, size: %zu, memory: %zu\n",
-            get(v, i),
-            getLength(v),
-            getCapacity(v)
-        );
     }
 
-    printVector(v);
+    assert(getLength(v) == 10);
+    assert(getCapacity(v) == 16);
 
-    printf("testing set/get\n");
-    printf("index 3 before set: %d\n", get(v, 3));
-
+    assert(get(v, 3) == 3);
     set(v, 3, 42);
+    assert(get(v, 3) == 42);
+    
+    //insert test
+    insert(v, getLength(v), 99);    
+    assert(get(v, getLength(v) - 1) == 99);
 
-    printf("index 3 after set: %d\n", get(v, 3));
-
-    printf("testing insert/remove\n");
-
-    insert(v, getLength(v), 99);
-    printf("last element after insert: %d\n", get(v, getLength(v) - 1));
-
+    insert(v, 5, 54);
+    assert(get(v, 5) == 54);
+    
+    //removeAt test
     removeAt(v, getLength(v) - 1);
-    printVector(v);
+    removeAt(v, 5);
+    assert(getLength(v) == 10);
+    assert(getCapacity(v) == 16);
 
-    printf("popping\n");
+    set(v, 3, 3);
     for (int i = 0; i < 10; i++) {
         int val = pop(v);
-
-        printf(
-            "%d, size: %zu, memory: %zu\n",
-            val,
-            getLength(v),
-            getCapacity(v)
-        );
+        assert(val == 9 - i);
     }
 
+    assert(getLength(v) == 0);
+    assert(getCapacity(v) == 2);
+
     destroy(v);
+
+    printf("success\n");
 }

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "vector.h"
 
 struct Vector {
@@ -84,12 +85,13 @@ void insert(Vector* vector, size_t index, int val){
             
         resize(vector, vector->capacity * 2);
     }
+    
+    //shifting every element above index up 1
+    memmove(vector->data + index + 1, 
+            vector->data + index, 
+            sizeof(int) * (vector->length - index));
 
     vector->length++;
-
-    for(int i = vector->length - 1; i > index; i--){
-        vector->data[i] = vector->data[i - 1];
-    }
 
     vector->data[index] = val;
 }
@@ -99,17 +101,19 @@ int removeAt(Vector* vector, size_t index){
         return pop(vector);
     }
 
-    vector->length--;
-
     int val = vector->data[index];
 
-    if(vector->length * 4 < vector->capacity){
+    if((vector->length - 1) * 4 < vector->capacity){
         resize(vector, vector->capacity / 2);
     }
 
-    for(int i = index; i < vector->length; i++){
-        vector->data[i] = vector->data[i + 1];
-    }
+    //shifting every element above index down 1
+
+    memmove(vector->data + index,
+            vector->data + index + 1,
+            sizeof(int) * (vector->length - index - 1)); 
+            
+    vector->length--;
 
     return val;
 }
