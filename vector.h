@@ -9,7 +9,6 @@ void destroy(Vector* vector);
 void push(Vector* vector, int val);
 int pop(Vector* vector);
 
-//naive solutions for these two, look into memmove
 void insert(Vector* vector, size_t index, int val);
 int removeAt(Vector* vector, size_t index);
 
